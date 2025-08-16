@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#3b82f6" />
+    <meta name="description" content="LibriPal - Your AI-powered library assistant for smart book management, reservations, and personalized recommendations." />
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://libripal.com/" />
+    <meta property="og:title" content="LibriPal - AI-Powered Library Assistant" />
+    <meta property="og:description" content="Smart library management with AI-powered chat, book recommendations, and automated reminders." />
+    <meta property="og:image" content="%PUBLIC_URL%/og-image.png" />
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="https://libripal.com/" />
+    <meta property="twitter:title" content="LibriPal - AI-Powered Library Assistant" />
+    <meta property="twitter:description" content="Smart library management with AI-powered chat, book recommendations, and automated reminders." />
+    <meta property="twitter:image" content="%PUBLIC_URL%/og-image.png" />
+
+    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
+    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+    
+    <!-- Preconnect to external domains -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
+    <!-- Critical CSS for fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <title>LibriPal - AI-Powered Library Assistant</title>
+    
+    <!-- Structured data for SEO -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "LibriPal",
+      "description": "AI-powered library management system with smart recommendations and automated reminders",
+      "url": "https://libripal.com",
+      "applicationCategory": "EducationApplication",
+      "operatingSystem": "Any",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "creator": {
+        "@type": "Organization",
+        "name": "LibriPal Team"
+      }
+    }
+    </script>
+  </head>
+  <body>
+    <noscript>
+      <div style="display: flex; align-items: center; justify-content: center; height: 100vh; font-family: Arial, sans-serif; text-align: center; padding: 2rem;">
+        <div>
+          <h1>JavaScript Required</h1>
+          <p>LibriPal requires JavaScript to function properly. Please enable JavaScript in your browser and reload the page.</p>
+        </div>
+      </div>
+    </noscript>
+    
+    <!-- Loading spinner shown while React loads -->
+    <div id="initial-loader" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #f8fafc; display: flex; align-items: center; justify-content: center; z-index: 9999;">
+      <div style="text-align: center;">
+        <div style="width: 40px; height: 40px; border: 4px solid #e2e8f0; border-top: 4px solid #3b82f6; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 1rem;"></div>
+        <p style="color: #64748b; font-family: 'Inter', sans-serif;">Loading LibriPal...</p>
+      </div>
+    </div>
+    
+    <style>
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+    </style>
+    
+    <script>
+      // Hide initial loader when React app mounts
+      window.addEventListener('load', function() {
+        setTimeout(function() {
+          const loader = document.getElementById('initial-loader');
+          if (loader) {
+            loader.style.opacity = '0';
+            loader.style.transition = 'opacity 0.3s ease-out';
+            setTimeout(() => {
+              loader.remove();
+            }, 300);
+          }
+        }, 500);
+      });
+    </script>
+    
+    <div id="root"></div>
+  </body>
+</html>
