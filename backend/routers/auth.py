@@ -1,88 +1,93 @@
 from fastapi import APIRouter, Depends, HTTPException, status
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-import httpx
-import os
-from models.database import get_database
-from models.pydantic_models import User, UserCreate, APIResponse
-from utils.auth import verify_clerk_token, get_current_user
+from fastapi.security import OAuth2PasswordRequestForm
+from pydantic import BaseModel
+from datetime import timedelta
+from utils.auth import verify_password, get_password_hash, create_access_token, ACCESS_TOKEN_EXPIRE_MINUTES
+import asyncio
 
 router = APIRouter()
-security = HTTPBearer()
 
-@router.post("/verify", response_model=APIResponse)
-async def verify_token(credentials: HTTPAuthorizationCredentials = Depends(security)):
-    """Verify Clerk token and return user info"""
-    try:
-        user_data = await verify_clerk_token(credentials.credentials)
-        return APIResponse(
-            success=True,
-            message="Token verified successfully",
-            data={"user": user_data}
-        )
-    except Exception as e:
+# In-memory user store (replace with database in production)
+USERS_DB = {
+    "admin": {
+        "username": "admin",
+        "email": "admin@libripal.com",
+        "hashed_password": get_password_hash("admin123"),
+        "first_name": "Admin",
+        "last_name": "User"
+    }
+}
+
+class UserRegister(BaseModel):
+    username: str
+    password: str
+    email: str
+    first_name: str = ""
+    last_name: str = ""
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+    user: dict
+
+@router.post("/login", response_model=Token)
+async def login(form_data: OAuth2PasswordRequestForm = Depends()):
+    user = USERS_DB.get(form_data.username)
+    if not user or not verify_password(form_data.password, user["hashed_password"]):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid token"
-        )
-
-@router.get("/me", response_model=User)
-async def get_current_user_info(current_user: dict = Depends(get_current_user)):
-    """Get current user information"""
-    return current_user
-
-@router.post("/register", response_model=APIResponse)
-async def register_user(
-    user_data: UserCreate,
-    db = Depends(get_database)
-):
-    """Register a new user (called automatically on first login)"""
-    try:
-        # Check if user already exists
-        existing_user = await db.fetchrow(
-            "SELECT id FROM users WHERE clerk_id = $1",
-            user_data.clerk_id
-        )
-        
-        if existing_user:
-            return APIResponse(
-                success=False,
-                message="User already exists"
-            )
-        
-        # Create new user
-        user_id = await db.fetchval("""
-            INSERT INTO users (clerk_id, email, first_name, last_name)
-            VALUES ($1, $2, $3, $4)
-            RETURNING id
-        """, user_data.clerk_id, user_data.email, user_data.first_name, user_data.last_name)
-        
-        return APIResponse(
-            success=True,
-            message="User registered successfully",
-            data={"user_id": user_id}
+            detail="Incorrect username or password",
+            headers={"WWW-Authenticate": "Bearer"},
         )
     
-    except Exception as e:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Registration failed: {str(e)}"
-        )
+    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token = create_access_token(
+        data={"sub": user["username"], "user_id": form_data.username}, 
+        expires_delta=access_token_expires
+    )
+    
+    return {
+        "access_token": access_token,
+        "token_type": "bearer",
+        "user": {
+            "username": user["username"],
+            "email": user["email"],
+            "first_name": user["first_name"],
+            "last_name": user["last_name"]
+        }
+    }
 
-@router.delete("/account", response_model=APIResponse)
-async def delete_account(current_user: dict = Depends(get_current_user)):
-    """Delete user account and all associated data"""
-    db = await get_database()
-    try:
-        # Delete user and cascade to related tables
-        await db.execute("DELETE FROM users WHERE id = $1", current_user["id"])
-        
-        return APIResponse(
-            success=True,
-            message="Account deleted successfully"
+@router.post("/register", response_model=Token)
+async def register(user_data: UserRegister):
+    if user_data.username in USERS_DB:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Username already registered"
         )
     
-    except Exception as e:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Account deletion failed: {str(e)}"
-        )
+    # Create new user
+    USERS_DB[user_data.username] = {
+        "username": user_data.username,
+        "email": user_data.email,
+        "hashed_password": get_password_hash(user_data.password),
+        "first_name": user_data.first_name,
+        "last_name": user_data.last_name
+    }
+    
+    # Create token
+    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token = create_access_token(
+        data={"sub": user_data.username, "user_id": user_data.username},
+        expires_delta=access_token_expires
+    )
+    
+    return {
+        "access_token": access_token,
+        "token_type": "bearer",
+        "user": {
+            "username": user_data.username,
+            "email": user_data.email,
+            "first_name": user_data.first_name,
+            "last_name": user_data.last_name
+        }
+    }

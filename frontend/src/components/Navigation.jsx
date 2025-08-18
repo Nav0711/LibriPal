@@ -1,10 +1,11 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { UserButton } from '@clerk/clerk-react';
-import { Home, MessageCircle, Search, User, Book } from 'lucide-react';
+import { useAuth } from '../App';
+import { Home, MessageCircle, Search, User, Book, LogOut } from 'lucide-react';
 
 const Navigation = () => {
   const location = useLocation();
+  const { user, logout } = useAuth();
 
   const navItems = [
     { path: '/', icon: Home, label: 'Dashboard' },
@@ -37,7 +38,14 @@ const Navigation = () => {
       </div>
 
       <div className="nav-user">
-        <UserButton afterSignOutUrl="/" />
+        <span className="welcome-text">Welcome, {user?.first_name || user?.username}!</span>
+        <button 
+          onClick={logout}
+          className="logout-btn"
+          title="Logout"
+        >
+          <LogOut size={20} />
+        </button>
       </div>
     </nav>
   );
