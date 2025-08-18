@@ -4,6 +4,7 @@ from models.pydantic_models import ChatMessage, ChatResponse, APIResponse
 from services.ai_service import AIService
 from services.book_service import BookService
 from utils.auth import get_current_user
+from typing import List
 import json
 
 router = APIRouter()
