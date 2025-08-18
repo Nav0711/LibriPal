@@ -4,6 +4,9 @@ from contextlib import asynccontextmanager
 import os
 from datetime import datetime
 
+# Import routers
+from routers import auth, books, chat, users
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Initialize database and start background tasks"""
@@ -27,6 +30,12 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Include API routers
+app.include_router(auth.router, prefix="/api/auth", tags=["auth"])
+app.include_router(books.router, prefix="/api/books", tags=["books"])
+app.include_router(chat.router, prefix="/api/chat", tags=["chat"])
+app.include_router(users.router, prefix="/api/users", tags=["users"])
 
 @app.get("/")
 async def root():
