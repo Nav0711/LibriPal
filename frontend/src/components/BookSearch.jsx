@@ -154,7 +154,7 @@ const BookSearch = ({ apiCall }) => {
           <div className="results-grid">
             {filteredResults.map((book) => (
               <div key={book.id} className="book-result-card">
-                <img src={book.cover_image_url || "/placeholder-book.png"} alt={book.title} className="book-cover" />
+                <img src={book.image_url || "/placeholder-book.png"} alt={book.title} className="book-cover" />
                 <div className="book-details">
                   <h4>{book.title}</h4>
                   <p className="author">by {book.author}</p>
@@ -176,7 +176,7 @@ const BookSearch = ({ apiCall }) => {
                     className={`btn ${book.available_copies > 0 ? "btn-primary" : "btn-secondary"}`}
                     onClick={() => handleReserveBook(book.id)}
                   >
-                    {book.available_copies > 0 ? "📖 Borrow Now" : "⏳ Join Waitlist"}
+                    {book.available_copies > 0 ? "📖 Issue Now" : "⏳ Join Waitlist"}
                   </button>
                 </div>
               </div>
