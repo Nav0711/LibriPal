@@ -1,76 +1,78 @@
-import React, { useState, useEffect } from 'react';
-import { Save, Bell, MessageSquare, Calendar } from 'lucide-react';
+"use client"
+
+import { useState, useEffect } from "react"
+import { Save, Bell, MessageSquare } from "lucide-react"
 
 const UserProfile = ({ apiCall }) => {
   const [profile, setProfile] = useState({
-    first_name: '',
-    last_name: '',
-    email: '',
-    telegram_chat_id: '',
+    first_name: "",
+    last_name: "",
+    email: "",
+    telegram_chat_id: "",
     preferences: {
       email_reminders: true,
       telegram_reminders: false,
       reminder_days: [3, 1],
-      recommendation_frequency: 'weekly'
-    }
-  });
-  const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
+      recommendation_frequency: "weekly",
+    },
+  })
+  const [loading, setLoading] = useState(true)
+  const [saving, setSaving] = useState(false)
 
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const data = await apiCall('/profile');
+        const data = await apiCall("/profile")
         setProfile({
           ...data,
           preferences: data.preferences || {
             email_reminders: true,
             telegram_reminders: false,
             reminder_days: [3, 1],
-            recommendation_frequency: 'weekly'
-          }
-        });
+            recommendation_frequency: "weekly",
+          },
+        })
       } catch (error) {
-        console.error('Error fetching profile:', error);
+        console.error("Error fetching profile:", error)
       } finally {
-        setLoading(false);
+        setLoading(false)
       }
-    };
+    }
 
-    fetchProfile();
-  }, [apiCall]);
+    fetchProfile()
+  }, [apiCall])
 
   const handleSave = async (e) => {
-    e.preventDefault();
-    setSaving(true);
-    
+    e.preventDefault()
+    setSaving(true)
+
     try {
-      await apiCall('/profile', {
-        method: 'PUT',
+      await apiCall("/profile", {
+        method: "PUT",
         body: JSON.stringify({
           first_name: profile.first_name,
           last_name: profile.last_name,
           telegram_chat_id: profile.telegram_chat_id,
-          preferences: profile.preferences
-        })
-      });
-      alert('Profile updated successfully!');
+          preferences: profile.preferences,
+        }),
+      })
+      alert("Profile updated successfully!")
     } catch (error) {
-      alert('Error updating profile: ' + error.message);
+      alert("Error updating profile: " + error.message)
     } finally {
-      setSaving(false);
+      setSaving(false)
     }
-  };
+  }
 
   const updatePreference = (key, value) => {
-    setProfile(prev => ({
+    setProfile((prev) => ({
       ...prev,
       preferences: {
         ...prev.preferences,
-        [key]: value
-      }
-    }));
-  };
+        [key]: value,
+      },
+    }))
+  }
 
   if (loading) {
     return (
@@ -78,7 +80,7 @@ const UserProfile = ({ apiCall }) => {
         <div className="loading-spinner"></div>
         <p>Loading profile...</p>
       </div>
-    );
+    )
   }
 
   return (
@@ -94,8 +96,8 @@ const UserProfile = ({ apiCall }) => {
               <label>First Name</label>
               <input
                 type="text"
-                value={profile.first_name || ''}
-                onChange={(e) => setProfile(prev => ({ ...prev, first_name: e.target.value }))}
+                value={profile.first_name || ""}
+                onChange={(e) => setProfile((prev) => ({ ...prev, first_name: e.target.value }))}
                 className="form-input"
               />
             </div>
@@ -103,21 +105,16 @@ const UserProfile = ({ apiCall }) => {
               <label>Last Name</label>
               <input
                 type="text"
-                value={profile.last_name || ''}
-                onChange={(e) => setProfile(prev => ({ ...prev, last_name: e.target.value }))}
+                value={profile.last_name || ""}
+                onChange={(e) => setProfile((prev) => ({ ...prev, last_name: e.target.value }))}
                 className="form-input"
               />
             </div>
           </div>
-          
+
           <div className="form-group">
             <label>Email</label>
-            <input
-              type="email"
-              value={profile.email || ''}
-              disabled
-              className="form-input disabled"
-            />
+            <input type="email" value={profile.email || ""} disabled className="form-input disabled" />
             <small>Email is managed by your account provider</small>
           </div>
 
@@ -125,8 +122,8 @@ const UserProfile = ({ apiCall }) => {
             <label>Telegram Chat ID (for bot notifications)</label>
             <input
               type="text"
-              value={profile.telegram_chat_id || ''}
-              onChange={(e) => setProfile(prev => ({ ...prev, telegram_chat_id: e.target.value }))}
+              value={profile.telegram_chat_id || ""}
+              onChange={(e) => setProfile((prev) => ({ ...prev, telegram_chat_id: e.target.value }))}
               placeholder="e.g., @username or chat ID"
               className="form-input"
             />
@@ -136,14 +133,16 @@ const UserProfile = ({ apiCall }) => {
 
         {/* Notification Preferences */}
         <div className="form-section">
-          <h2><Bell className="section-icon" /> Notification Preferences</h2>
-          
+          <h2>
+            <Bell className="section-icon" /> Notification Preferences
+          </h2>
+
           <div className="form-group">
             <label className="checkbox-label">
               <input
                 type="checkbox"
                 checked={profile.preferences.email_reminders}
-                onChange={(e) => updatePreference('email_reminders', e.target.checked)}
+                onChange={(e) => updatePreference("email_reminders", e.target.checked)}
               />
               <span>Email Reminders</span>
             </label>
@@ -155,7 +154,7 @@ const UserProfile = ({ apiCall }) => {
               <input
                 type="checkbox"
                 checked={profile.preferences.telegram_reminders}
-                onChange={(e) => updatePreference('telegram_reminders', e.target.checked)}
+                onChange={(e) => updatePreference("telegram_reminders", e.target.checked)}
                 disabled={!profile.telegram_chat_id}
               />
               <span>Telegram Reminders</span>
@@ -166,21 +165,29 @@ const UserProfile = ({ apiCall }) => {
           <div className="form-group">
             <label>Reminder Days Before Due Date</label>
             <div className="reminder-days">
-              {[1, 2, 3, 5, 7].map(day => (
+              {[1, 2, 3, 5, 7].map((day) => (
                 <label key={day} className="checkbox-label inline">
                   <input
                     type="checkbox"
                     checked={profile.preferences.reminder_days.includes(day)}
                     onChange={(e) => {
-                      const days = profile.preferences.reminder_days;
+                      const days = profile.preferences.reminder_days
                       if (e.target.checked) {
-                        updatePreference('reminder_days', [...days, day].sort((a, b) => b - a));
+                        updatePreference(
+                          "reminder_days",
+                          [...days, day].sort((a, b) => b - a),
+                        )
                       } else {
-                        updatePreference('reminder_days', days.filter(d => d !== day));
+                        updatePreference(
+                          "reminder_days",
+                          days.filter((d) => d !== day),
+                        )
                       }
                     }}
                   />
-                  <span>{day} day{day > 1 ? 's' : ''}</span>
+                  <span>
+                    {day} day{day > 1 ? "s" : ""}
+                  </span>
                 </label>
               ))}
             </div>
@@ -189,13 +196,15 @@ const UserProfile = ({ apiCall }) => {
 
         {/* AI Preferences */}
         <div className="form-section">
-          <h2><MessageSquare className="section-icon" /> AI Assistant Preferences</h2>
-          
+          <h2>
+            <MessageSquare className="section-icon" /> AI Assistant Preferences
+          </h2>
+
           <div className="form-group">
             <label>Recommendation Frequency</label>
             <select
               value={profile.preferences.recommendation_frequency}
-              onChange={(e) => updatePreference('recommendation_frequency', e.target.value)}
+              onChange={(e) => updatePreference("recommendation_frequency", e.target.value)}
               className="form-select"
             >
               <option value="daily">Daily</option>
@@ -206,13 +215,9 @@ const UserProfile = ({ apiCall }) => {
           </div>
         </div>
 
-        <button 
-          type="submit" 
-          className="btn btn-primary btn-large"
-          disabled={saving}
-        >
+        <button type="submit" className="btn btn-primary btn-large" disabled={saving}>
           <Save className="btn-icon" />
-          {saving ? 'Saving...' : 'Save Profile'}
+          {saving ? "Saving..." : "Save Profile"}
         </button>
       </form>
 
@@ -227,7 +232,7 @@ const UserProfile = ({ apiCall }) => {
         </ol>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default UserProfile;
+export default UserProfile

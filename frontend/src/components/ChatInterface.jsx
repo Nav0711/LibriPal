@@ -1,12 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, Bot, User, Book, Clock, Star } from 'lucide-react';
+import { Send, Bot, User, Star, ShoppingCart } from 'lucide-react';
 
 const ChatInterface = ({ apiCall }) => {
   const [messages, setMessages] = useState([
     {
       id: 1,
       type: 'bot',
-      content: "Hello Enthusiast-AD! 👋 I'm LibriPal, your AI-powered library assistant. I'm here to help you find books, check your account, and answer any library questions you might have. What would you like to explore today?",
+      content: "Hello Enthusiast-AD! 👋 I'm LibriPal with enhanced memory and access to 100k+ books. I remember our previous conversations and can help you find books from our extensive database. What would you like to explore today?",
       timestamp: new Date()
     }
   ]);
@@ -39,7 +39,7 @@ const ChatInterface = ({ apiCall }) => {
     setIsLoading(true);
 
     try {
-      console.log('🤖 Sending to Gemini AI:', currentMessage);
+      console.log('🧠 Sending to Context-Aware Gemini:', currentMessage);
       
       const response = await apiCall('/api/chat', {
         method: 'POST',
@@ -52,7 +52,7 @@ const ChatInterface = ({ apiCall }) => {
         })
       });
 
-      console.log('🧠 Gemini AI response:', response);
+      console.log('🤖 Context-Aware Response:', response);
 
       const botMessage = {
         id: Date.now() + 1,
@@ -70,8 +70,8 @@ const ChatInterface = ({ apiCall }) => {
       const errorMessage = {
         id: Date.now() + 1,
         type: 'bot',
-        content: 'I apologize, but I\'m having trouble connecting to my AI brain right now. Please try again in a moment, or feel free to ask me something else!',
-        suggestions: ['Try again', 'Check library hours', 'Search for books'],
+        content: 'I\'m having trouble right now, but I remember our conversation! Please try again and I\'ll pick up where we left off.',
+        suggestions: ['Try again', 'Search for books', 'Continue our conversation'],
         timestamp: new Date()
       };
       setMessages(prev => [...prev, errorMessage]);
@@ -104,6 +104,175 @@ const ChatInterface = ({ apiCall }) => {
     }
   };
 
+  const renderBookCard = (book) => (
+    <div key={book.id} className="book-result-card" style={{
+      background: 'linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)',
+      border: '1px solid #e2e8f0',
+      borderRadius: '1rem',
+      padding: '1rem',
+      marginBottom: '1rem',
+      boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+      transition: 'transform 0.2s',
+      display: 'flex',
+      gap: '1rem'
+    }}>
+      {/* Book Image */}
+      <div style={{ flexShrink: 0 }}>
+        <img 
+          src={book.image_url || '/placeholder-book.png'} 
+          alt={book.title}
+          style={{
+            width: '80px',
+            height: '120px',
+            objectFit: 'cover',
+            borderRadius: '0.5rem',
+            backgroundColor: '#f1f5f9'
+          }}
+          onError={(e) => {
+            e.target.src = `https://via.placeholder.com/80x120/3b82f6/ffffff?text=${encodeURIComponent(book.title.substring(0, 10))}`;
+          }}
+        />
+      </div>
+
+      {/* Book Details */}
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '0.5rem' }}>
+          <h5 style={{ 
+            margin: '0', 
+            fontSize: '0.9rem', 
+            fontWeight: '600', 
+            color: '#1e293b',
+            lineHeight: 1.3
+          }}>
+            {book.title}
+          </h5>
+          <span style={{
+            backgroundColor: book.available_copies > 0 ? '#dcfce7' : '#fee2e2',
+            color: book.available_copies > 0 ? '#166534' : '#991b1b',
+            padding: '0.125rem 0.5rem',
+            borderRadius: '1rem',
+            fontSize: '0.7rem',
+            fontWeight: '500',
+            whiteSpace: 'nowrap'
+          }}>
+            {book.available_copies > 0 ? '✅ Available' : '❌ Unavailable'}
+          </span>
+        </div>
+        
+        <p style={{ 
+          margin: '0 0 0.5rem 0', 
+          fontSize: '0.75rem', 
+          color: '#64748b', 
+          fontStyle: 'italic' 
+        }}>
+          by {book.author}
+        </p>
+
+        {/* Rating and Price */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '0.5rem' }}>
+          {book.rating && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+              <Star size={12} style={{ color: '#fbbf24', fill: 'currentColor' }} />
+              <span style={{ fontSize: '0.7rem', color: '#64748b' }}>{book.rating}</span>
+            </div>
+          )}
+          {book.price && (
+            <span style={{ 
+              fontSize: '0.8rem', 
+              fontWeight: '600', 
+              color: '#059669' 
+            }}>
+              {book.price}
+            </span>
+          )}
+        </div>
+
+        {/* Categories */}
+        {book.categories && book.categories.length > 0 && (
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.25rem', marginBottom: '0.75rem' }}>
+            {book.categories.slice(0, 2).map((category, index) => (
+              <span key={index} style={{
+                backgroundColor: '#eff6ff',
+                color: '#3b82f6',
+                padding: '0.125rem 0.375rem',
+                borderRadius: '0.25rem',
+                fontSize: '0.625rem',
+                fontWeight: '500'
+              }}>
+                {category}
+              </span>
+            ))}
+          </div>
+        )}
+
+        {/* Actions */}
+        <div style={{ display: 'flex', gap: '0.5rem' }}>
+          {book.available_copies > 0 ? (
+            <button
+              onClick={() => handleBorrowBook(book.id)}
+              style={{
+                backgroundColor: '#3b82f6',
+                color: 'white',
+                border: 'none',
+                padding: '0.375rem 0.75rem',
+                borderRadius: '0.375rem',
+                fontSize: '0.75rem',
+                fontWeight: '500',
+                cursor: 'pointer',
+                transition: 'background-color 0.2s',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.25rem'
+              }}
+              onMouseOver={(e) => e.target.style.backgroundColor = '#2563eb'}
+              onMouseOut={(e) => e.target.style.backgroundColor = '#3b82f6'}
+            >
+              📖 Borrow
+            </button>
+          ) : (
+            <button
+              style={{
+                backgroundColor: '#f59e0b',
+                color: 'white',
+                border: 'none',
+                padding: '0.375rem 0.75rem',
+                borderRadius: '0.375rem',
+                fontSize: '0.75rem',
+                fontWeight: '500',
+                cursor: 'pointer'
+              }}
+            >
+              📋 Reserve
+            </button>
+          )}
+          
+          <button
+            style={{
+              backgroundColor: 'transparent',
+              color: '#64748b',
+              border: '1px solid #e2e8f0',
+              padding: '0.375rem 0.5rem',
+              borderRadius: '0.375rem',
+              fontSize: '0.75rem',
+              cursor: 'pointer',
+              transition: 'all 0.2s'
+            }}
+            onMouseOver={(e) => {
+              e.target.style.borderColor = '#3b82f6';
+              e.target.style.color = '#3b82f6';
+            }}
+            onMouseOut={(e) => {
+              e.target.style.borderColor = '#e2e8f0';
+              e.target.style.color = '#64748b';
+            }}
+          >
+            ℹ️ Details
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+
   const renderBotMessage = (message) => {
     const { content, data, responseType, suggestions } = message;
 
@@ -117,90 +286,13 @@ const ChatInterface = ({ apiCall }) => {
         {responseType === 'book_search' && data && data.length > 0 && (
           <div className="search-results" style={{ marginTop: '1rem' }}>
             <h4 style={{ margin: '0 0 1rem 0', color: '#3b82f6', fontSize: '0.875rem' }}>
-              📚 Found {data.length} book{data.length !== 1 ? 's' : ''}:
+              📚 Found {data.length} book{data.length !== 1 ? 's' : ''} from our database:
             </h4>
-            {data.map(book => (
-              <div key={book.id} className="book-result-card" style={{
-                background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)',
-                border: '1px solid #e2e8f0',
-                borderRadius: '0.75rem',
-                padding: '1rem',
-                marginBottom: '0.75rem',
-                transition: 'transform 0.2s',
-                cursor: 'pointer'
-              }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '0.5rem' }}>
-                  <h5 style={{ margin: '0', fontSize: '0.875rem', fontWeight: '600', color: '#1e293b' }}>
-                    {book.title}
-                  </h5>
-                  <span style={{
-                    backgroundColor: book.available_copies > 0 ? '#dcfce7' : '#fee2e2',
-                    color: book.available_copies > 0 ? '#166534' : '#991b1b',
-                    padding: '0.125rem 0.5rem',
-                    borderRadius: '1rem',
-                    fontSize: '0.75rem',
-                    fontWeight: '500'
-                  }}>
-                    {book.available_copies > 0 ? '✅ Available' : '❌ Unavailable'}
-                  </span>
-                </div>
-                
-                <p style={{ margin: '0 0 0.5rem 0', fontSize: '0.75rem', color: '#64748b', fontStyle: 'italic' }}>
-                  by {book.author}
-                </p>
-                
-                {book.ai_summary && (
-                  <p style={{ margin: '0 0 0.75rem 0', fontSize: '0.75rem', color: '#475569', lineHeight: '1.4' }}>
-                    {book.ai_summary}
-                  </p>
-                )}
-                
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                    <span style={{ fontSize: '0.75rem', color: '#64748b' }}>
-                      📖 {book.available_copies}/{book.total_copies} copies
-                    </span>
-                    {book.genre && (
-                      <span style={{
-                        backgroundColor: '#eff6ff',
-                        color: '#3b82f6',
-                        padding: '0.125rem 0.375rem',
-                        borderRadius: '0.25rem',
-                        fontSize: '0.625rem',
-                        fontWeight: '500'
-                      }}>
-                        {book.genre}
-                      </span>
-                    )}
-                  </div>
-                  
-                  {book.available_copies > 0 && (
-                    <button
-                      onClick={() => handleBorrowBook(book.id)}
-                      style={{
-                        backgroundColor: '#3b82f6',
-                        color: 'white',
-                        border: 'none',
-                        padding: '0.375rem 0.75rem',
-                        borderRadius: '0.375rem',
-                        fontSize: '0.75rem',
-                        fontWeight: '500',
-                        cursor: 'pointer',
-                        transition: 'background-color 0.2s'
-                      }}
-                      onMouseOver={(e) => e.target.style.backgroundColor = '#2563eb'}
-                      onMouseOut={(e) => e.target.style.backgroundColor = '#3b82f6'}
-                    >
-                      📖 Borrow
-                    </button>
-                  )}
-                </div>
-              </div>
-            ))}
+            {data.map(renderBookCard)}
           </div>
         )}
 
-        {/* Library Hours */}
+        {/* Library Hours (existing code) */}
         {responseType === 'library_info' && data && (
           <div className="library-hours" style={{ 
             marginTop: '1rem',
@@ -270,13 +362,13 @@ const ChatInterface = ({ apiCall }) => {
     );
   };
 
-  const smartSuggestions = [
-    "Find books about machine learning",
-    "What are the library hours?",
-    "Show me popular programming books",
-    "How do I renew my books?",
-    "Recommend books for data science",
-    "Check my account status"
+  const contextAwareSuggestions = [
+    "Find programming books for beginners",
+    "Show me highly rated fiction books",
+    "Search for data science textbooks",
+    "What are the latest bestsellers?",
+    "Find books similar to what we discussed before",
+    "Show me books in computer science category"
   ];
 
   return (
@@ -287,7 +379,7 @@ const ChatInterface = ({ apiCall }) => {
           <div>
             <h2 style={{ margin: 0, fontSize: '1.125rem' }}>LibriPal AI Assistant</h2>
             <p style={{ margin: 0, fontSize: '0.75rem', color: '#64748b' }}>
-              Powered by Gemini AI • Ready to help
+              Context-Aware Gemini 1.5 Flash • 100k+ Books • Memory Enabled
             </p>
           </div>
         </div>
@@ -331,7 +423,7 @@ const ChatInterface = ({ apiCall }) => {
                 <span></span>
               </div>
               <p style={{ margin: '0.5rem 0 0 0', fontSize: '0.75rem', color: '#64748b' }}>
-                🧠 Thinking with Gemini AI...
+                🧠 Analyzing with context-aware Gemini...
               </p>
             </div>
           </div>
@@ -342,10 +434,10 @@ const ChatInterface = ({ apiCall }) => {
 
       <div className="quick-actions">
         <p style={{ margin: '0 0 0.75rem 0', fontSize: '0.875rem', color: '#64748b', fontWeight: '500' }}>
-          🚀 Quick suggestions:
+          🚀 Context-aware suggestions:
         </p>
         <div className="quick-buttons">
-          {smartSuggestions.map((action, index) => (
+          {contextAwareSuggestions.map((action, index) => (
             <button
               key={index}
               className="quick-action-btn"
@@ -362,7 +454,7 @@ const ChatInterface = ({ apiCall }) => {
           type="text"
           value={inputMessage}
           onChange={(e) => setInputMessage(e.target.value)}
-          placeholder="Ask me anything about the library... (powered by Gemini AI)"
+          placeholder="Ask me anything... I remember our conversation and can search 100k+ books!"
           className="chat-input"
           disabled={isLoading}
         />
@@ -370,7 +462,7 @@ const ChatInterface = ({ apiCall }) => {
           type="submit" 
           className="send-button"
           disabled={isLoading || !inputMessage.trim()}
-          title="Send message to Gemini AI"
+          title="Send to Context-Aware Gemini AI"
         >
           <Send size={20} />
         </button>
