@@ -1,5 +1,5 @@
 # 📚 Library Chatbot System
-An AI-powered **chatbot-based library system** designed for hackathons!  
+An AI-powered **chatbot-based library system** designed for students for quick response to library materials.
 This project modernizes how students interact with libraries by offering a conversational chatbot, smart notifications, book issue/renewals, and fee tracking.  
 ---
 ## ✨ Features
