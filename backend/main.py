@@ -15,9 +15,11 @@ import traceback
 from typing import List, Dict, Optional
 import re
 from decimal import Decimal
+from dotenv import load_dotenv
 
 # Configure Gemini AI
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "AIzaSyCiA6cAGyMXRUm-wx1om_IaapTiaF4grtc")
+load_dotenv()
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 if GEMINI_API_KEY:
     genai.configure(api_key=GEMINI_API_KEY)
     model = genai.GenerativeModel('gemini-1.5-flash')
@@ -27,7 +29,7 @@ else:
     print("⚠️ Gemini API key not found")
 
 # Database connection
-DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://neondb_owner:npg_nskVhilfX58c@ep-fancy-mud-a149b904-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require")
+DATABASE_URL = os.getenv("DATABASE_URL")
 
 class Database:
     _connection: Optional[asyncpg.Connection] = None
