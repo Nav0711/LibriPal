@@ -23,6 +23,8 @@
 
 LibriPal revolutionizes the traditional library experience by providing an intelligent, conversational interface for all your library needs. Say goodbye to complex library systems and hello to intuitive, chat-based interactions!
 
+Problem statement: AI powered Library and book reminder
+
 ### 🎯 Why LibriPal?
 
 - **🤖 Smart Conversations** - Natural language processing for intuitive queries
