@@ -9,10 +9,8 @@ const Navigation = () => {
   const { user, logout } = useAuth()
 
   const navItems = [
-    { path: "/", icon: Home, label: "Dashboard" },
     { path: "/chat", icon: MessageCircle, label: "Chat Assistant" },
     { path: "/search", icon: Search, label: "Search Books" },
-    { path: "/profile", icon: User, label: "Profile" },
   ]
 
   return (

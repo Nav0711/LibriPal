@@ -1,9 +1,9 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import Dashboard from './components/Dashboard';
+// import Dashboard from './components/Dashboard';
 import ChatInterface from './components/ChatInterface';
 import BookSearch from './components/BookSearch';
-import UserProfile from './components/UserProfile';
+// import UserProfile from './components/UserProfile';
 import Navigation from './components/Navigation';
 import LoginPage from './components/LoginPage';
 import './App.css';
@@ -86,10 +86,8 @@ function AppContent() {
         <Navigation />
         <main className="main-content">
           <Routes>
-            <Route path="/" element={<Dashboard apiCall={apiCall} />} />
             <Route path="/chat" element={<ChatInterface apiCall={apiCall} />} />
             <Route path="/search" element={<BookSearch apiCall={apiCall} />} />
-            <Route path="/profile" element={<UserProfile apiCall={apiCall} />} />
             <Route path="*" element={<Navigate to="/" />} />
           </Routes>
         </main>
