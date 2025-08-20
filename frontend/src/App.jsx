@@ -88,7 +88,7 @@ function AppContent() {
           <Routes>
             <Route path="/chat" element={<ChatInterface apiCall={apiCall} />} />
             <Route path="/search" element={<BookSearch apiCall={apiCall} />} />
-            <Route path="*" element={<Navigate to="/" />} />
+            <Route path="*" element={<Navigate to="/chat" />} />
           </Routes>
         </main>
       </div>
