@@ -41,7 +41,7 @@ const ChatInterface = ({ apiCall }) => {
     try {
       const response = await apiCall('/api/chat', {
         method: 'POST',
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           message: currentMessage,
           context: { user: "Enthusiast-AD", timestamp: new Date().toISOString() }
         })
@@ -89,14 +89,14 @@ const ChatInterface = ({ apiCall }) => {
           book_price: book.price
         })
       });
-      
+
       const confirmationMessage = {
         id: Date.now(),
         type: 'bot',
         content: `${response.success ? '✅' : '❌'} ${response.message}`,
         timestamp: new Date()
       };
-      
+
       setMessages(prev => [...prev, confirmationMessage]);
     } catch (error) {
       console.error('Issue error:', error);
@@ -108,14 +108,14 @@ const ChatInterface = ({ apiCall }) => {
       const response = await apiCall(`/api/books/renew/${issueId}`, {
         method: 'POST'
       });
-      
+
       const confirmationMessage = {
         id: Date.now(),
         type: 'bot',
         content: `${response.success ? '✅' : '❌'} ${response.message}`,
         timestamp: new Date()
       };
-      
+
       setMessages(prev => [...prev, confirmationMessage]);
     } catch (error) {
       console.error('Renewal error:', error);
@@ -134,8 +134,8 @@ const ChatInterface = ({ apiCall }) => {
       gap: '1rem'
     }}>
       <div style={{ flexShrink: 0 }}>
-        <img 
-          src={book.image_url || '/placeholder-book.png'} 
+        <img
+          src={book.image_url || '/placeholder-book.png'}
           alt={book.title}
           style={{
             width: '80px',
@@ -152,10 +152,10 @@ const ChatInterface = ({ apiCall }) => {
 
       <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '0.5rem' }}>
-          <h5 style={{ 
-            margin: '0', 
-            fontSize: '0.9rem', 
-            fontWeight: '600', 
+          <h5 style={{
+            margin: '0',
+            fontSize: '0.9rem',
+            fontWeight: '600',
             color: '#1e293b',
             lineHeight: 1.3
           }}>
@@ -173,7 +173,7 @@ const ChatInterface = ({ apiCall }) => {
             {book.can_issue ? '✅ Can Issue' : '❌ Limit Reached'}
           </span>
         </div>
-        
+
         <p style={{ margin: '0 0 0.5rem 0', fontSize: '0.75rem', color: '#64748b', fontStyle: 'italic' }}>
           by {book.author}
         </p>
@@ -216,9 +216,9 @@ const ChatInterface = ({ apiCall }) => {
 
   const renderIssuedBookCard = (book) => (
     <div key={book.id} className="issued-book-card" style={{
-      background: book.urgency === 'overdue' ? 'linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%)' : 
-                 book.urgency === 'due_soon' ? 'linear-gradient(135deg, #fefce8 0%, #fef3c7 100%)' : 
-                 'linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%)',
+      background: book.urgency === 'overdue' ? 'linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%)' :
+        book.urgency === 'due_soon' ? 'linear-gradient(135deg, #fefce8 0%, #fef3c7 100%)' :
+          'linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%)',
       border: `1px solid ${book.urgency === 'overdue' ? '#fecaca' : book.urgency === 'due_soon' ? '#fed7aa' : '#bbf7d0'}`,
       borderRadius: '1rem',
       padding: '1rem',
@@ -227,8 +227,8 @@ const ChatInterface = ({ apiCall }) => {
       gap: '1rem'
     }}>
       <div style={{ flexShrink: 0 }}>
-        <img 
-          src={book.book_image_url || '/placeholder-book.png'} 
+        <img
+          src={book.book_image_url || '/placeholder-book.png'}
           alt={book.book_title}
           style={{
             width: '60px',
@@ -254,8 +254,8 @@ const ChatInterface = ({ apiCall }) => {
               Due: {new Date(book.due_date).toLocaleDateString()}
             </span>
           </div>
-          <span style={{ 
-            fontSize: '0.75rem', 
+          <span style={{
+            fontSize: '0.75rem',
             color: book.urgency === 'overdue' ? '#dc2626' : book.urgency === 'due_soon' ? '#d97706' : '#059669',
             fontWeight: '500'
           }}>
@@ -309,7 +309,7 @@ const ChatInterface = ({ apiCall }) => {
         <div className="message-text" style={{ whiteSpace: 'pre-line', marginBottom: '1rem' }}>
           {content}
         </div>
-        
+
         {/* Book Search Results */}
         {responseType === 'book_search' && data && data.length > 0 && (
           <div className="search-results" style={{ marginTop: '1rem' }}>
@@ -330,10 +330,10 @@ const ChatInterface = ({ apiCall }) => {
             {data.length > 0 ? (
               data.map(renderIssuedBookCard)
             ) : (
-              <div style={{ 
-                textAlign: 'center', 
-                padding: '2rem', 
-                backgroundColor: '#f0fdf4', 
+              <div style={{
+                textAlign: 'center',
+                padding: '2rem',
+                backgroundColor: '#f0fdf4',
                 borderRadius: '0.5rem',
                 border: '1px solid #bbf7d0'
               }}>
@@ -348,7 +348,7 @@ const ChatInterface = ({ apiCall }) => {
 
         {/* Library Hours */}
         {responseType === 'library_info' && data && data.hours && (
-          <div className="library-info" style={{ 
+          <div className="library-info" style={{
             marginTop: '1rem',
             backgroundColor: '#f8fafc',
             border: '1px solid #e2e8f0',
@@ -367,8 +367,8 @@ const ChatInterface = ({ apiCall }) => {
               </p>
             </div>
             {Object.entries(data.hours).map(([day, hours]) => (
-              <div key={day} style={{ 
-                display: 'flex', 
+              <div key={day} style={{
+                display: 'flex',
                 justifyContent: 'space-between',
                 padding: '0.25rem 0',
                 fontSize: '0.75rem'
@@ -430,25 +430,46 @@ const ChatInterface = ({ apiCall }) => {
   ];
 
   return (
-    <div className="chat-interface">
-      <div className="chat-header">
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+    <div className="chat-interface" style={{
+      width: "auto",       // increase chat box width
+      height: "600px",      // increase chat box height
+      display: "flex",
+      flexDirection: "column",
+      border: "1px solid #e5e7eb",
+      borderRadius: "0.75rem",
+      overflow: "hidden",
+      backgroundColor: "white"
+    }}>
+      <div className="chat-header" style={{
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "flex-start",
+        padding: "0.75rem 1rem",
+        borderBottom: "1px solid #e5e7eb",
+        backgroundColor: "#f9fafb"
+      }}>
+        {/* Left side: Logo + Title */}
+        <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
           <Bot className="chat-icon" />
           <div>
-            <h2 style={{ margin: 0, fontSize: '1.125rem' }}>LibriPal Library Assistant</h2>
-            <p style={{ margin: 0, fontSize: '0.75rem', color: '#64748b' }}>
-              Complete Book Management • Issue • Return • Renew • Fines in ₹
+            <h2 style={{ margin: 0, fontSize: "1rem" }}>LibriPal</h2>
+            <p style={{ margin: 0, fontSize: "0.65rem", color: "#64748b" }}>
+              Book Management • Issue • Return • Renew
             </p>
           </div>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+
+        {/* Right side: Online Status */}
+        <div style={{ display: "flex", alignItems: "center", gap: "0.35rem" }}>
           <div style={{
-            width: '8px',
-            height: '8px',
-            backgroundColor: '#10b981',
-            borderRadius: '50%'
+            width: "7px",
+            height: "7px",
+            backgroundColor: "#10b981",
+            borderRadius: "50%"
           }}></div>
-          <span style={{ fontSize: '0.75rem', color: '#10b981', fontWeight: '500' }}>Online</span>
+          <span style={{ fontSize: "0.65rem", color: "#10b981", fontWeight: "500" }}>
+            Online
+          </span>
         </div>
       </div>
 
@@ -458,9 +479,14 @@ const ChatInterface = ({ apiCall }) => {
             <div className="message-avatar">
               {message.type === 'bot' ? <Bot size={20} /> : <User size={20} />}
             </div>
-            <div className="message-content">
+            <div className="message-content" style={{
+              backgroundColor: message.type === 'user' ? '#e0f2fe' : 'white', // Light blue for user messages
+              borderRadius: '0.5rem',
+              padding: '1rem',
+              boxShadow: '0 1px 2px rgba(0,0,0,0.05)'
+            }}>
               {message.type === 'bot' ? renderBotMessage(message) : (
-                <p>{message.content}</p>
+                <p style={{ margin: 0 }}>{message.content}</p>
               )}
               <span className="message-time">
                 {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
@@ -468,7 +494,7 @@ const ChatInterface = ({ apiCall }) => {
             </div>
           </div>
         ))}
-        
+
         {isLoading && (
           <div className="message bot">
             <div className="message-avatar">
@@ -486,14 +512,14 @@ const ChatInterface = ({ apiCall }) => {
             </div>
           </div>
         )}
-        
+
         <div ref={messagesEndRef} />
       </div>
 
       <div className="quick-actions">
-        <p style={{ margin: '0 0 0.75rem 0', fontSize: '0.875rem', color: '#64748b', fontWeight: '500' }}>
+        {/* <p style={{ margin: '0 0 0.75rem 0', fontSize: '0.875rem', color: '#64748b', fontWeight: '500' }}>
           🚀 Quick actions:
-        </p>
+        </p> */}
         <div className="quick-buttons">
           {libraryManagementSuggestions.map((action, index) => (
             <button
@@ -515,8 +541,8 @@ const ChatInterface = ({ apiCall }) => {
           className="chat-input"
           disabled={isLoading}
         />
-        <button 
-          type="submit" 
+        <button
+          type="submit"
           className="send-button"
           disabled={isLoading || !inputMessage.trim()}
           title="Send to LibriPal AI"
@@ -528,4 +554,4 @@ const ChatInterface = ({ apiCall }) => {
   );
 };
 
-export default ChatInterface;
+export default ChatInterface; 
