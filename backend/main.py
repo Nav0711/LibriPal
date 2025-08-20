@@ -17,7 +17,7 @@ import re
 from decimal import Decimal
 from dotenv import load_dotenv
 
-# Configure Gemini AI
+# Conffig of  Gemini AI
 load_dotenv()
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 if GEMINI_API_KEY:
@@ -28,7 +28,7 @@ else:
     model = None
     print("⚠️ Gemini API key not found")
 
-# Database connection
+# Database conct
 DATABASE_URL = os.getenv("DATABASE_URL")
 
 class Database:
@@ -57,7 +57,7 @@ chat_contexts = {}
 api_cache = {}
 CACHE_DURATION = timedelta(minutes=30)
 
-# Library constants
+# lib const
 MAX_BORROW_DAYS = 15
 FINE_PER_DAY = 50  # Rupees
 MAX_RENEWALS = 2
@@ -201,7 +201,7 @@ class LiveBookSearchService:
 
 book_search_service = LiveBookSearchService()
 
-# Pydantic models
+# pydantic models
 class ChatMessage(BaseModel):
     message: str
     context: dict = None
@@ -246,7 +246,7 @@ async def init_database():
             print("⚠️ Skipping database initialization - no connection")
             return
         
-        # Check if users table exists and get its structure
+        #  if users table exists and get structure
         existing_users_columns = await db.fetch("""
             SELECT column_name FROM information_schema.columns 
             WHERE table_name = 'users' AND table_schema = 'public'
@@ -257,7 +257,7 @@ async def init_database():
         has_username = any(col['column_name'] == 'username' for col in existing_users_columns)
         
         if not users_table_exists:
-            # Create users table with clerk_id (compatible with existing schema)
+            # create users tables with clerk (compatible with existing schema)
             await db.execute("""
                 CREATE TABLE IF NOT EXISTS users (
                     id SERIAL PRIMARY KEY,
@@ -490,12 +490,12 @@ async def generate_context_aware_response(user_message: str, user_id: str = "Ent
                 "suggestions": ["Try again later", "Contact support"]
             }
 
-        # Get user context and issued books
+        # take user context and issued books
         user_context = get_user_context(user_id)
         db_user_id = await get_user_id(user_id)
         issued_books = await get_user_issued_books(db_user_id)
         
-        # Build context for AI
+        # ai context
         issued_books_summary = ""
         total_fine = Decimal('0.00')
         if issued_books:
@@ -563,7 +563,7 @@ Be helpful and reference their current library status when relevant!
             
             ai_response = json.loads(response_text)
             
-            # Handle different intents
+            # Handleing different intents
             if ai_response.get("show_issued") or ai_response.get("intent") == "issued_books":
                 ai_response["data"] = issued_books
                 ai_response["type"] = "issued_books"
@@ -602,7 +602,7 @@ Be helpful and reference their current library status when relevant!
                     else:
                         ai_response["message"] += f"\n\n❌ No books found for '{search_query}'. Try different search terms!"
             
-            # Add library info for library_info requests
+            # Add lib info for lib_info request
             elif ai_response.get("type") == "library_info":
                 ai_response["data"] = {
                     "max_borrow_days": MAX_BORROW_DAYS,

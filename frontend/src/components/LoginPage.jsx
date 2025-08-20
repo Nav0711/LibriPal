@@ -55,14 +55,14 @@ const LoginPage = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-500 to-purple-600 p-4">
       <div className="max-w-md w-full">
-        {/* Hero Section */}
+        {/* Hero*/}
         <div className="text-center text-white mb-8">
           <Book size={64} className="mx-auto mb-4" />
           <h1 className="text-4xl font-bold mb-2">LibriPal</h1>
           <p className="text-lg opacity-90">Your AI-Powered Library Assistant</p>
         </div>
 
-        {/* Login Form */}
+        {/* Login */}
         <div className="bg-white rounded-lg shadow-xl p-8">
           <h2 className="text-2xl font-bold text-center mb-6">{isLogin ? "Welcome Back" : "Create Account"}</h2>
 

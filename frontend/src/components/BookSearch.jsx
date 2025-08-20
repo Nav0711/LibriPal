@@ -38,7 +38,6 @@ const BookSearch = ({ apiCall }) => {
         body: JSON.stringify({ book_id: bookId }),
       })
       alert(response.message)
-      // Refresh search results to update availability
       handleSearch()
     } catch (error) {
       alert("Error: " + error.message)
@@ -81,27 +80,27 @@ const BookSearch = ({ apiCall }) => {
 
         {/* Filters */}
         <div className="filters">
-          <Filter className="filter-icon" />
-          <select
-            value={filters.genre}
+            <Filter className="filter-icon" />
+              <select
+             value={filters.genre}
             onChange={(e) => setFilters((prev) => ({ ...prev, genre: e.target.value }))}
             className="filter-select"
           >
             <option value="">All Genres</option>
             <option value="fiction">Fiction</option>
             <option value="science">Science</option>
-            <option value="technology">Technology</option>
+              <option value="technology">Technology</option>
             <option value="history">History</option>
             <option value="biography">Biography</option>
           </select>
 
-          <input
-            type="text"
-            value={filters.author}
-            onChange={(e) => setFilters((prev) => ({ ...prev, author: e.target.value }))}
-            placeholder="Filter by author"
-            className="filter-input"
-          />
+                    <input
+                      type="text"
+                      value={filters.author}
+                      onChange={(e) => setFilters((prev) => ({ ...prev, author: e.target.value }))}
+                      placeholder="Filter by author"
+                      className="filter-input"
+                    />
 
           <select
             value={filters.availability}
@@ -114,7 +113,7 @@ const BookSearch = ({ apiCall }) => {
         </div>
       </div>
 
-      {/* Quick Search Suggestions */}
+      {/* Quick Srch */}
       <div className="quick-searches">
         <h3>Popular Searches:</h3>
         <div className="suggestion-chips">
@@ -140,7 +139,7 @@ const BookSearch = ({ apiCall }) => {
         </div>
       </div>
 
-      {/* Search Results */}
+      {/* Search res */}
       {loading && (
         <div className="loading-container">
           <div className="loading-spinner"></div>

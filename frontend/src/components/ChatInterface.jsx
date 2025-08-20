@@ -22,16 +22,16 @@ const ChatInterface = ({ apiCall }) => {
     scrollToBottom();
   }, [messages]);
 
-  const handleSendMessage = async (e) => {
-    e.preventDefault();
-    if (!inputMessage.trim() || isLoading) return;
+      const handleSendMessage = async (e) => {
+        e.preventDefault();
+        if (!inputMessage.trim() || isLoading) return;
 
-    const userMessage = {
-      id: Date.now(),
-      type: 'user',
-      content: inputMessage,
-      timestamp: new Date()
-    };
+        const userMessage = {
+          id: Date.now(),
+          type: 'user',
+          content: inputMessage,
+          timestamp: new Date()
+        };
 
     setMessages(prev => [...prev, userMessage]);
     const currentMessage = inputMessage;
@@ -44,6 +44,8 @@ const ChatInterface = ({ apiCall }) => {
         body: JSON.stringify({
           message: currentMessage,
           context: { user: "Enthusiast-AD", timestamp: new Date().toISOString() }
+
+
         })
       });
 
@@ -169,6 +171,8 @@ const ChatInterface = ({ apiCall }) => {
             fontSize: '0.7rem',
             fontWeight: '500',
             whiteSpace: 'nowrap'
+            // fontWeight: '200',
+            // whiteSpace: 'wrap'
           }}>
             {book.can_issue ? '✅ Can Issue' : '❌ Limit Reached'}
           </span>
@@ -310,21 +314,21 @@ const ChatInterface = ({ apiCall }) => {
           {content}
         </div>
 
-        {/* Book Search Results */}
+        {/* book srch res */}
         {responseType === 'book_search' && data && data.length > 0 && (
           <div className="search-results" style={{ marginTop: '1rem' }}>
             {data.map(renderBookCard)}
           </div>
         )}
 
-        {/* Issued Books */}
+        {/* issued */}
         {responseType === 'issued_books' && data && data.length > 0 && (
           <div className="issued-books" style={{ marginTop: '1rem' }}>
             {data.map(renderIssuedBookCard)}
           </div>
         )}
 
-        {/* Fines Display */}
+        {/* fines  */}
         {responseType === 'fines' && data && (
           <div className="fines-display" style={{ marginTop: '1rem' }}>
             {data.length > 0 ? (
@@ -346,7 +350,7 @@ const ChatInterface = ({ apiCall }) => {
           </div>
         )}
 
-        {/* Library Hours */}
+        {/* lib info */}
         {responseType === 'library_info' && data && data.hours && (
           <div className="library-info" style={{
             marginTop: '1rem',
@@ -380,7 +384,7 @@ const ChatInterface = ({ apiCall }) => {
           </div>
         )}
 
-        {/* AI Suggestions */}
+        {/* AI predict */}
         {suggestions && suggestions.length > 0 && (
           <div className="ai-suggestions" style={{ marginTop: '1rem' }}>
             <p style={{ margin: '0 0 0.5rem 0', fontSize: '0.75rem', color: '#64748b', fontWeight: '500' }}>
@@ -431,8 +435,8 @@ const ChatInterface = ({ apiCall }) => {
 
   return (
     <div className="chat-interface" style={{
-      width: "auto",       // increase chat box width
-      height: "600px",      // increase chat box height
+      width: "auto",
+      height: "600px",      
       display: "flex",
       flexDirection: "column",
       border: "1px solid #e5e7eb",
@@ -448,7 +452,7 @@ const ChatInterface = ({ apiCall }) => {
         borderBottom: "1px solid #e5e7eb",
         backgroundColor: "#f9fafb"
       }}>
-        {/* Left side: Logo + Title */}
+        {/* Left side ka logo aur title */}
         <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
           <Bot className="chat-icon" />
           <div>
@@ -459,7 +463,7 @@ const ChatInterface = ({ apiCall }) => {
           </div>
         </div>
 
-        {/* Right side: Online Status */}
+        {/* top right online  */}
         <div style={{ display: "flex", alignItems: "center", gap: "0.35rem" }}>
           <div style={{
             width: "7px",
